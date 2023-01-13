@@ -1,12 +1,16 @@
 # brainrender
 using cellfinder output files to render 3D models of fluorescently labeled cells 
 
-# Create Conda env 
+# Starting from scratch
+## 1. Create anacoonda envrioment 
 #### This will create an env where you can render 3D models of you labled cells
 ##### open an Anaconda prompt
-##### >> conda create --brainrender myenv
+##### >> conda create -n brainrender python=3.9
 ##### >> conda activate brainrender 
 ##### >> pip install brainrender
+
+## 2. Download the batch file from this repository
+#### This batch file will 
 
 # Changes to make to brainrender.py file before running
 ## 1. Change Path to cellfinder_output points.npy file
