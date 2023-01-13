@@ -9,10 +9,10 @@ using cellfinder output files to render 3D models of fluorescently labeled cells
 ##### >> pip install brainrender
 
 # Changes to make to brainrender.py file before running
-#### 1. Change Path to cellfinder_output points.npy file
+## 1. Change Path to cellfinder_output points.npy file
 ##### line 21 cells_path = r"C:\Users\denma\Desktop\Grant\cellfinder\cellfinder_output\points\points.npy"
 
-#### 2. change the path to where your locally stored allen mouse atlas
+## 2. change the path to where your locally stored allen mouse atlas
 ##### line 25 allen_mouse_50um = r'C:\Users\denma\.brainglobe\allen_mouse_50um_v1.2'
 
 # Run updated brainrender.py file
