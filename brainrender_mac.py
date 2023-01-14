@@ -37,13 +37,21 @@ brain_regions_name = brain_regions_df['name'].to_list()
 
 # File path to the saved json file
 file_path = cellfinder_output_path + mouseid +"_Completed_Analysis/" +"gfp_brainregions_list.json"
-
 with open(file_path, 'r') as f:
     file_content = f.read()
     brain_regions_list = json.loads(file_content)
 
-print("top 5 brain regions with most labled cells in gfp")
-print(brain_regions_list[0:5])
+count_file_path = cellfinder_output_path + mouseid +"_Completed_Analysis/" +"gfp_brainregions_count.json"
+with open(count_file_path, 'r') as f:
+    file_content = f.read()
+    brain_regions_count_list = json.loads(file_content)
+
+brain_regions_dictionary = dict(zip(brain_regions_list, brain_regions_count_list))
+brain_regions_df = pd.DataFrame.from_dict(brain_regions_dictionary,orient='index')
+print("The "+str(brain_regions_to_evalutate)+" brain regions your loading with labled cells count")
+evaluate = list(brain_regions_dictionary.items())[:brain_regions_to_evalutate]
+print(evaluate)
+
 
 # create lists of just the brain regions you want to evaluate, uses brain_regions_to_evalutate variable value
 evaluate_brain_regions = brain_regions_list[0:brain_regions_to_evalutate]
@@ -69,20 +77,19 @@ print(f"[{orange}]Running example: {Path(__file__).name}")
 atlas = BrainGlobeAtlas('allen_mouse_50um', check_latest=False)
 
 # intialise brainrender scene
-scene = Scene(atlas_name='allen_mouse_50um', title="G20_test")
+scene = Scene(atlas_name='allen_mouse_50um', title=mouseid)
 print(scene.atlas.space)
 
 # add brain regions and labels 
+colors =  ["red",'orange',"yellow","green","blue"]
 for i in range(brain_regions_to_evalutate):
-    print(i)
-    evaluate_brain_region_acronyms[i] = scene.add_brain_region(str(evaluate_brain_region_acronyms[i]), alpha=0.2, color="green")
+    evaluate_brain_region_acronyms[i] = scene.add_brain_region(str(evaluate_brain_region_acronyms[i]), alpha=0.2, color=colors[i])
 
 for i in range(brain_regions_to_evalutate):
-    print(i)   
     scene.add_label(evaluate_brain_region_acronyms[i], str(evaluate_brain_regions[i]))
 
 # You can specify color, transparency... of brain regions
-VISp = scene.add_brain_region("VISp", alpha=0.2, color="green")
+# VISp = scene.add_brain_region("VISp", alpha=0.2, color="green")
 # VISl = scene.add_brain_region('VISl',  alpha=0.2, color="red")
 # LGd = scene.add_brain_region('LGd', alpha=0.2, color="blue")
 # LP = scene.add_brain_region('LP', alpha=0.2, color="yellow")
@@ -93,7 +100,7 @@ VISp = scene.add_brain_region("VISp", alpha=0.2, color="green")
 # scene.add_label(LGd, "Lateral Geniculate Nucleus of the Thalmus")
 # scene.add_label(LP, "Lateral Posterior Thalmus")
 
-# create and add a cylinder actor
+# create and add a cylinder actor to brain region with the most labled cells 
 actor_electrode = Cylinder(
     evaluate_brain_region_acronyms[0],  # center the cylinder at the center of mass of Primary Visual area, by using its varaible name
     scene.root,  # the cylinder actor needs information about the root mesh
