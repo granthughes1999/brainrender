@@ -9,6 +9,8 @@ from rich import print
 from myterial import orange
 from pathlib import Path
 
+bg_atlas.structures
+
 # >>> UPDATE THESE TWO PATHS
 # 1. path to cellfinder output folder
 cellfinder_output_path = "/Users/grant/Desktop/mock_df/cellfinder_output/"
@@ -31,14 +33,13 @@ atlas = BrainGlobeAtlas('allen_mouse_50um', check_latest=False)
 # intialise brainrender scene
 scene = Scene(atlas_name='allen_mouse_50um', title="G20_test")
 print(scene.atlas.space)
-
 # You can specify color, transparency... of brain regions
 VISp = scene.add_brain_region("VISp", alpha=0.2, color="green")
 VISl = scene.add_brain_region('VISl',  alpha=0.2, color="red")
 LGd = scene.add_brain_region('LGd', alpha=0.2, color="blue")
 LP = scene.add_brain_region('LP', alpha=0.2, color="yellow")
 
-# Add lables to brain regions
+# Add lables to brain regions'
 scene.add_label(VISp, "Primary Visual area")
 scene.add_label(VISl, "Lateral Visual area")
 scene.add_label(LGd, "Lateral Geniculate Nucleus of the Thalmus")
