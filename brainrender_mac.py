@@ -14,6 +14,11 @@ from bg_atlasapi import show_atlases
 from bg_atlasapi.bg_atlas import BrainGlobeAtlas
 
 
+
+
+
+
+
 # >>> UPDATE THESE 4 variables
 # 1. How many top brain regions to evaluate. (default is 5)
 brain_regions_to_evalutate = 5
@@ -23,6 +28,14 @@ cellfinder_output_path = "/Users/grant/Desktop/mock_df/cellfinder_output/"
 allen_mouse_10um = '/Users/grant/brainglobe/allen_mouse_10um'
 # 4. mouse id (example: G25)
 mouseid = "test_000"
+
+
+
+
+
+
+
+
 
 # Path to cellfinder_output points.npy file
 cells_path = cellfinder_output_path + 'points/points.npy'
@@ -81,7 +94,7 @@ scene = Scene(atlas_name='allen_mouse_50um', title=mouseid)
 print(scene.atlas.space)
 
 # add brain regions and labels 
-colors =  ["red",'orange',"yellow","green","blue"]
+colors =  ["red",'orange',"yellow","green","blue","red",'orange',"yellow","green","blue","red",'orange',"yellow","green","blue"]
 for i in range(brain_regions_to_evalutate):
     evaluate_brain_region_acronyms[i] = scene.add_brain_region(str(evaluate_brain_region_acronyms[i]), alpha=0.2, color=colors[i])
 
