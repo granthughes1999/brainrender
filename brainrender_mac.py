@@ -8,18 +8,56 @@ import numpy as np
 from rich import print
 from myterial import orange
 from pathlib import Path
+import pandas as pd
+import json
+from bg_atlasapi import show_atlases
+from bg_atlasapi.bg_atlas import BrainGlobeAtlas
 
-bg_atlas.structures
 
-# >>> UPDATE THESE TWO PATHS
-# 1. path to cellfinder output folder
+# >>> UPDATE THESE 4 variables
+# 1. How many top brain regions to evaluate. (default is 5)
+brain_regions_to_evalutate = 5
+# 2. path to cellfinder output folder
 cellfinder_output_path = "/Users/grant/Desktop/mock_df/cellfinder_output/"
-# 2. path to local location of allen mouse brain atlas
+# 3. path to local location of allen mouse brain atlas
 allen_mouse_10um = '/Users/grant/brainglobe/allen_mouse_10um'
+# 4. mouse id (example: G25)
+mouseid = "test_000"
 
 # Path to cellfinder_output points.npy file
 cells_path = cellfinder_output_path + 'points/points.npy'
 print(cells_path)
+
+# read in braingloab regions df, make lists of names and acryonms
+atlas = BrainGlobeAtlas("allen_mouse_50um")
+brain_regions_df = atlas.lookup_df.head(1000)
+
+brain_regions_acronym = brain_regions_df['acronym'].to_list()
+brain_regions_name = brain_regions_df['name'].to_list()
+
+# File path to the saved json file
+file_path = cellfinder_output_path + mouseid +"_Completed_Analysis/" +"gfp_brainregions_list.json"
+
+with open(file_path, 'r') as f:
+    file_content = f.read()
+    brain_regions_list = json.loads(file_content)
+
+print("top 5 brain regions with most labled cells in gfp")
+print(brain_regions_list[0:5])
+
+# create lists of just the brain regions you want to evaluate, uses brain_regions_to_evalutate variable value
+evaluate_brain_regions = brain_regions_list[0:brain_regions_to_evalutate]
+index = []
+for i in evaluate_brain_regions:
+    index.append(brain_regions_name.index(i))
+
+evaluate_brain_region_acronyms = []    
+for i in index:
+    evaluate_brain_region_acronyms.append(brain_regions_acronym[i])
+
+evaluate_brain_regions_dictionary = dict(zip(evaluate_brain_regions, evaluate_brain_region_acronyms))
+evaluate_brain_regions_df = pd.DataFrame.from_dict(evaluate_brain_regions_dictionary,orient='index')
+evaluate_brain_regions_df.rename(index={0: 'acronym'}, inplace=True)
 
 # unknown from cylinder example file on github
 settings.SHOW_AXES = False
@@ -33,21 +71,31 @@ atlas = BrainGlobeAtlas('allen_mouse_50um', check_latest=False)
 # intialise brainrender scene
 scene = Scene(atlas_name='allen_mouse_50um', title="G20_test")
 print(scene.atlas.space)
+
+# add brain regions and labels 
+for i in range(brain_regions_to_evalutate):
+    print(i)
+    evaluate_brain_region_acronyms[i] = scene.add_brain_region(str(evaluate_brain_region_acronyms[i]), alpha=0.2, color="green")
+
+for i in range(brain_regions_to_evalutate):
+    print(i)   
+    scene.add_label(evaluate_brain_region_acronyms[i], str(evaluate_brain_regions[i]))
+
 # You can specify color, transparency... of brain regions
 VISp = scene.add_brain_region("VISp", alpha=0.2, color="green")
-VISl = scene.add_brain_region('VISl',  alpha=0.2, color="red")
-LGd = scene.add_brain_region('LGd', alpha=0.2, color="blue")
-LP = scene.add_brain_region('LP', alpha=0.2, color="yellow")
+# VISl = scene.add_brain_region('VISl',  alpha=0.2, color="red")
+# LGd = scene.add_brain_region('LGd', alpha=0.2, color="blue")
+# LP = scene.add_brain_region('LP', alpha=0.2, color="yellow")
 
-# Add lables to brain regions'
-scene.add_label(VISp, "Primary Visual area")
-scene.add_label(VISl, "Lateral Visual area")
-scene.add_label(LGd, "Lateral Geniculate Nucleus of the Thalmus")
-scene.add_label(LP, "Lateral Posterior Thalmus")
+# # Add lables to brain regions'
+# scene.add_label(VISp, "Primary Visual area")
+# scene.add_label(VISl, "Lateral Visual area")
+# scene.add_label(LGd, "Lateral Geniculate Nucleus of the Thalmus")
+# scene.add_label(LP, "Lateral Posterior Thalmus")
 
 # create and add a cylinder actor
 actor_electrode = Cylinder(
-    VISp,  # center the cylinder at the center of mass of Primary Visual area, by using its varaible name
+    evaluate_brain_region_acronyms[0],  # center the cylinder at the center of mass of Primary Visual area, by using its varaible name
     scene.root,  # the cylinder actor needs information about the root mesh
 )
 
